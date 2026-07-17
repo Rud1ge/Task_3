@@ -1,4 +1,5 @@
 import allure
+from selenium.webdriver.support.wait import WebDriverWait
 
 from locators import main_page_locators, modal_locators
 from pages.base_page import BasePage
@@ -9,7 +10,6 @@ class MainPage(BasePage):
     @allure.step("Открываем конструктор")
     def open(self):
         self.driver.get(CONSTRUCTOR_URL)
-        self.close_modal_if_present()
         self.wait_for_visibility(main_page_locators.CONSTRUCTOR_TITLE)
 
     @allure.step("Открываем вкладку «Соусы»")
@@ -23,8 +23,11 @@ class MainPage(BasePage):
 
     @allure.step("Получаем счётчик ингредиента: {name}")
     def get_ingredient_counter(self, name):
-        counter = self.wait_for_visibility(main_page_locators.ingredient_counter_by_name(name))
-        return int(counter.text)
+        return int(
+            self.wait_for_visibility(
+                main_page_locators.ingredient_counter_by_name(name)
+            ).text
+        )
 
     @allure.step("Добавляем булку в заказ: {name}")
     def add_bun_to_order(self, name):
@@ -33,20 +36,18 @@ class MainPage(BasePage):
             main_page_locators.CONSTRUCTOR_BASKET,
         )
 
-    @allure.step("Добавляем начинку или соус в заказ: {name}")
-    def add_filling_to_order(self, name):
-        if "Соус" in name:
-            self.open_sauces_tab()
+    @allure.step("Добавляем соус в заказ: {name}")
+    def add_sauce_to_order(self, name):
+        self.open_sauces_tab()
         self.drag_and_drop(
             main_page_locators.ingredient_link_by_name(name),
             main_page_locators.CONSTRUCTOR_BASKET,
         )
 
-    @allure.step("Собираем бургер по умолчанию")
-    def build_default_burger(self, bun_name, filling_name):
+    @allure.step("Собираем бургер")
+    def build_burger(self, bun_name, sauce_name):
         self.add_bun_to_order(bun_name)
-        self.add_filling_to_order(filling_name)
-        self.wait_for_visibility(main_page_locators.PLACE_ORDER_BUTTON, timeout=10)
+        self.add_sauce_to_order(sauce_name)
 
     @allure.step("Нажимаем «Оформить заказ»")
     def click_place_order(self):
@@ -58,8 +59,10 @@ class MainPage(BasePage):
 
     @allure.step("Закрываем модалку")
     def close_modal(self):
-        button = self.wait_for_clickable(modal_locators.MODAL_CLOSE_BUTTON)
-        self.driver.execute_script("arguments[0].click();", button)
+        self.driver.execute_script(
+            "arguments[0].click();",
+            self.wait_for_clickable(modal_locators.MODAL_CLOSE_BUTTON),
+        )
         self.wait_until_invisible(main_page_locators.INGREDIENT_MODAL)
 
     @allure.step("Проверяем, что модалка закрыта")
@@ -68,9 +71,16 @@ class MainPage(BasePage):
 
     @allure.step("Проверяем, что заказ оформлен")
     def is_order_success_modal_visible(self):
-        return self.is_displayed(modal_locators.ORDER_SUCCESS_MODAL)
+        return self.get_order_number_from_modal() > 0
 
     @allure.step("Получаем номер оформленного заказа")
     def get_order_number_from_modal(self):
-        heading = self.wait_for_visibility(modal_locators.ORDER_NUMBER_TEXT)
-        return int(heading.text.strip())
+        WebDriverWait(self.driver, 20).until(
+            lambda driver: len(
+                driver.find_element(*modal_locators.ORDER_NUMBER_TEXT).text.strip()
+            )
+            >= 5
+        )
+        return int(
+            self.driver.find_element(*modal_locators.ORDER_NUMBER_TEXT).text.strip()
+        )

@@ -1,5 +1,3 @@
-from selenium.common.exceptions import TimeoutException
-
 import allure
 
 from locators import account_page_locators
@@ -17,12 +15,8 @@ class AccountPage(BasePage):
         self.click(account_page_locators.LOGOUT_BUTTON)
         self.wait_for_url_contains("/login")
 
-    def is_order_in_history(self, order_number, timeout=15):
-        try:
-            self.wait_for_visibility(
-                account_page_locators.order_number_in_history(order_number),
-                timeout=timeout,
-            )
-            return True
-        except TimeoutException:
-            return False
+    def is_order_in_history(self, order_number):
+        return self.wait_for_visibility(
+            account_page_locators.order_number_in_history(order_number),
+            timeout=15,
+        ).is_displayed()

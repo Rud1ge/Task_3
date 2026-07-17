@@ -1,5 +1,4 @@
 import allure
-from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
 from locators import login_page_locators
@@ -11,7 +10,6 @@ class LoginPage(BasePage):
     @allure.step("Открываем страницу входа")
     def open(self):
         self.driver.get(LOGIN_URL)
-        self.close_modal_if_present()
         self.wait_for_visibility(login_page_locators.PAGE_TITLE)
 
     @allure.step("Переходим на страницу восстановления пароля")
@@ -23,7 +21,6 @@ class LoginPage(BasePage):
         self.send_keys(login_page_locators.EMAIL_INPUT, email)
         self.send_keys(login_page_locators.PASSWORD_INPUT, password)
         self.click(login_page_locators.LOGIN_BUTTON)
-        WebDriverWait(self.driver, 10).until(lambda driver: "/login" not in driver.current_url)
-
-    def is_open(self):
-        return "/login" in self.current_url
+        WebDriverWait(self.driver, 10).until(
+            lambda driver: "/login" not in driver.current_url
+        )

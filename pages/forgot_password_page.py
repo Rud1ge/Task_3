@@ -9,7 +9,6 @@ class ForgotPasswordPage(BasePage):
     @allure.step("Открываем страницу восстановления пароля")
     def open(self):
         self.driver.get(FORGOT_PASSWORD_URL)
-        self.close_modal_if_present()
         self.wait_for_visibility(forgot_password_page_locators.PAGE_TITLE)
 
     @allure.step("Вводим email: {email}")
@@ -18,12 +17,8 @@ class ForgotPasswordPage(BasePage):
 
     @allure.step("Нажимаем кнопку «Восстановить»")
     def click_restore(self):
-        self.close_modal_if_present()
         self.click(forgot_password_page_locators.RESTORE_BUTTON)
         self.wait_for_url_contains("/reset-password")
 
-    def is_open(self):
-        return "/forgot-password" in self.current_url
-
     def is_reset_page_open(self):
-        return "/reset-password" in self.current_url
+        return "/reset-password" in self.driver.current_url
