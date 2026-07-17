@@ -30,7 +30,7 @@ class TestOrderFeed:
 
         main_page = MainPage(driver)
         main_page.open()
-        main_page.authorize_by_token(user["accessToken"])
+        main_page.authorize_by_token(user["accessToken"], user["refreshToken"])
         driver.get(ACCOUNT_ORDERS_URL)
 
         account_page = AccountPage(driver)
@@ -72,7 +72,7 @@ class TestOrderFeed:
     def test_new_order_appears_in_progress(self, driver, user):
         main_page = MainPage(driver)
         main_page.open()
-        main_page.authorize_by_token(user["accessToken"])
+        main_page.authorize_by_token(user["accessToken"], user["refreshToken"])
         main_page.build_default_burger(INGREDIENT_BUN, INGREDIENT_FILLING)
         main_page.click_place_order()
         order_number = main_page.get_order_number_from_modal()

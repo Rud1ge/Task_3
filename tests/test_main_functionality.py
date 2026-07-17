@@ -61,7 +61,7 @@ class TestMainFunctionality:
     def test_logged_in_user_can_place_order(self, driver, user):
         main_page = MainPage(driver)
         main_page.open()
-        main_page.authorize_by_token(user["accessToken"])
+        main_page.authorize_by_token(user["accessToken"], user["refreshToken"])
         main_page.build_default_burger(INGREDIENT_BUN, INGREDIENT_FILLING)
         main_page.click_place_order()
 
