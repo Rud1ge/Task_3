@@ -1,7 +1,6 @@
 BASE_URL = "https://stellarburgers.education-services.ru"
 
 REGISTER_ENDPOINT = f"{BASE_URL}/api/auth/register"
-LOGIN_ENDPOINT = f"{BASE_URL}/api/auth/login"
 USER_ENDPOINT = f"{BASE_URL}/api/auth/user"
 ORDERS_ENDPOINT = f"{BASE_URL}/api/orders"
 INGREDIENTS_ENDPOINT = f"{BASE_URL}/api/ingredients"

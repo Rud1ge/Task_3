@@ -1,37 +1,87 @@
+import random
+import string
+
 import allure
 import pytest
-from selenium.common.exceptions import JavascriptException
+import requests
+from selenium import webdriver
 
-from helpers import WebDriverFactory, delete_user, register_new_user_and_return_data
-from pages.base_page import BasePage
-from urls import BASE_URL
+from pages.login_page import LoginPage
+from urls import (
+    BASE_URL,
+    INGREDIENTS_ENDPOINT,
+    ORDERS_ENDPOINT,
+    REGISTER_ENDPOINT,
+    USER_ENDPOINT,
+)
+
+
+@pytest.fixture(params=["chrome", "firefox"], scope="class")
+def driver(request):
+    browser = webdriver.Chrome() if request.param == "chrome" else webdriver.Firefox()
+    yield browser
+    browser.quit()
 
 
 @pytest.fixture(autouse=True)
 def reset_browser_state(driver):
     driver.get(BASE_URL)
-    try:
-        driver.execute_script("localStorage.clear(); sessionStorage.clear();")
-    except JavascriptException:
-        pass
+    driver.execute_script("localStorage.clear(); sessionStorage.clear();")
     driver.delete_all_cookies()
     yield
-    BasePage(driver).close_modal_if_present()
-
-
-@pytest.fixture(params=["chrome", "firefox"], scope="class")
-def driver(request):
-    with allure.step(f"Открываем браузер {request.param}"):
-        browser = WebDriverFactory.get_driver(request.param)
-    yield browser
-    with allure.step("Закрываем браузер"):
-        browser.quit()
 
 
 @pytest.fixture
 def user():
-    with allure.step("Создаём пользователя для теста"):
-        user_data = register_new_user_and_return_data()
-    yield user_data
-    with allure.step("Удаляем пользователя после теста"):
-        delete_user(user_data["accessToken"])
+    email = f"{''.join(random.choices(string.ascii_lowercase, k=10))}@example.com"
+    password = "".join(random.choices(string.ascii_lowercase, k=10))
+    name = "".join(random.choices(string.ascii_lowercase, k=10))
+    body = requests.post(
+        REGISTER_ENDPOINT,
+        json={"email": email, "password": password, "name": name},
+    ).json()
+    data = {
+        "email": email,
+        "password": password,
+        "name": name,
+        "accessToken": body["accessToken"],
+        "refreshToken": body["refreshToken"],
+    }
+    yield data
+    requests.delete(USER_ENDPOINT, headers={"Authorization": data["accessToken"]})
+
+
+@pytest.fixture
+def ingredients():
+    items = requests.get(INGREDIENTS_ENDPOINT).json()["data"]
+    bun = next(item for item in items if item["type"] == "bun")
+    sauce = next(item for item in items if item["type"] == "sauce")
+    return {
+        "bun_name": bun["name"],
+        "sauce_name": sauce["name"],
+        "bun_id": bun["_id"],
+        "sauce_id": sauce["_id"],
+    }
+
+
+@pytest.fixture
+def order(user, ingredients):
+    return requests.post(
+        ORDERS_ENDPOINT,
+        json={
+            "ingredients": [
+                ingredients["bun_id"],
+                ingredients["sauce_id"],
+                ingredients["bun_id"],
+            ]
+        },
+        headers={"Authorization": user["accessToken"]},
+    ).json()
+
+
+@pytest.fixture
+def authorized_user(driver, user):
+    login_page = LoginPage(driver)
+    login_page.open()
+    login_page.login(user["email"], user["password"])
+    return user
