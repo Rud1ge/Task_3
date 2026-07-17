@@ -18,6 +18,7 @@ class ForgotPasswordPage(BasePage):
 
     @allure.step("Нажимаем кнопку «Восстановить»")
     def click_restore(self):
+        self.close_modal_if_present()
         self.click(forgot_password_page_locators.RESTORE_BUTTON)
         self.wait_for_url_contains("/reset-password")
 

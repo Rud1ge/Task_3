@@ -90,7 +90,10 @@ class BasePage:
         close_buttons = self.driver.find_elements(By.XPATH, ".//button[contains(@class, 'modal__close')]")
         for button in close_buttons:
             if button.is_displayed():
-                button.click()
+                try:
+                    button.click()
+                except ElementClickInterceptedException:
+                    self.driver.execute_script("arguments[0].click();", button)
                 return
 
     @allure.step("Переходим в конструктор")
@@ -106,10 +109,18 @@ class BasePage:
         self.click(header_locators.PERSONAL_ACCOUNT_LINK)
 
     @allure.step("Авторизуем пользователя через localStorage")
-    def authorize_by_token(self, access_token):
-        self.driver.execute_script(
-            'localStorage.setItem("accessToken", arguments[0]);',
-            access_token,
-        )
+    def authorize_by_token(self, access_token, refresh_token=None):
+        if refresh_token:
+            self.driver.execute_script(
+                'localStorage.setItem("accessToken", arguments[0]);'
+                'localStorage.setItem("refreshToken", arguments[1]);',
+                access_token,
+                refresh_token,
+            )
+        else:
+            self.driver.execute_script(
+                'localStorage.setItem("accessToken", arguments[0]);',
+                access_token,
+            )
         self.driver.refresh()
         self.close_modal_if_present()

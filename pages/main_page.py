@@ -27,13 +27,11 @@ class MainPage(BasePage):
         return int(counter.text)
 
     @allure.step("Добавляем булку в заказ: {name}")
-    def add_bun_to_order(self, name, position="top"):
-        target = (
-            main_page_locators.CONSTRUCTOR_TOP_DROP_ZONE
-            if position == "top"
-            else main_page_locators.CONSTRUCTOR_BOTTOM_DROP_ZONE
+    def add_bun_to_order(self, name):
+        self.drag_and_drop(
+            main_page_locators.ingredient_link_by_name(name),
+            main_page_locators.CONSTRUCTOR_BASKET,
         )
-        self.drag_and_drop(main_page_locators.ingredient_link_by_name(name), target)
 
     @allure.step("Добавляем начинку или соус в заказ: {name}")
     def add_filling_to_order(self, name):
@@ -46,9 +44,8 @@ class MainPage(BasePage):
 
     @allure.step("Собираем бургер по умолчанию")
     def build_default_burger(self, bun_name, filling_name):
-        self.add_bun_to_order(bun_name, position="top")
+        self.add_bun_to_order(bun_name)
         self.add_filling_to_order(filling_name)
-        self.add_bun_to_order(bun_name, position="bottom")
         self.wait_for_visibility(main_page_locators.PLACE_ORDER_BUTTON, timeout=10)
 
     @allure.step("Нажимаем «Оформить заказ»")
@@ -61,7 +58,8 @@ class MainPage(BasePage):
 
     @allure.step("Закрываем модалку")
     def close_modal(self):
-        self.click(modal_locators.MODAL_CLOSE_BUTTON)
+        button = self.wait_for_clickable(modal_locators.MODAL_CLOSE_BUTTON)
+        self.driver.execute_script("arguments[0].click();", button)
         self.wait_until_invisible(main_page_locators.INGREDIENT_MODAL)
 
     @allure.step("Проверяем, что модалка закрыта")
