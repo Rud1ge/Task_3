@@ -1,13 +1,19 @@
 import allure
 import pytest
+from selenium.common.exceptions import JavascriptException
 
 from helpers import WebDriverFactory, delete_user, register_new_user_and_return_data
 from pages.base_page import BasePage
+from urls import BASE_URL
 
 
 @pytest.fixture(autouse=True)
 def reset_browser_state(driver):
-    driver.execute_script("localStorage.clear(); sessionStorage.clear();")
+    driver.get(BASE_URL)
+    try:
+        driver.execute_script("localStorage.clear(); sessionStorage.clear();")
+    except JavascriptException:
+        pass
     driver.delete_all_cookies()
     yield
     BasePage(driver).close_modal_if_present()
