@@ -1,3 +1,4 @@
+import os
 import random
 import string
 
@@ -14,6 +15,10 @@ from urls import (
     USER_ENDPOINT,
 )
 
+CHROME_BINARY = os.environ.get(
+    "CHROME_BINARY",
+    "/snap/chromium/current/usr/lib/chromium-browser/chrome",
+)
 FIREFOX_BINARY = "/snap/firefox/current/usr/lib/firefox/firefox"
 
 
@@ -75,6 +80,7 @@ class WebDriverFactory:
         if browser_name == "chrome":
             options = ChromeOptions()
             options.page_load_strategy = "eager"
+            options.binary_location = CHROME_BINARY
             return webdriver.Chrome(options=options)
         if browser_name == "firefox":
             options = FirefoxOptions()
