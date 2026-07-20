@@ -61,6 +61,7 @@ class TestMainFunctionality:
         main_page = MainPage(driver)
         main_page.open()
         main_page.add_bun_to_order(ingredients["bun_name"])
+        main_page.open_sauces_tab()
         main_page.add_sauce_to_order(ingredients["sauce_name"])
         main_page.click_place_order()
 

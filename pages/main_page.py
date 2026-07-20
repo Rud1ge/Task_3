@@ -1,5 +1,3 @@
-import time
-
 import allure
 
 from locators import main_page_locators, modal_locators
@@ -35,7 +33,6 @@ class MainPage(BasePage):
 
     @allure.step("Добавляем соус в заказ: {name}")
     def add_sauce_to_order(self, name):
-        self.open_sauces_tab()
         self.drag_and_drop(
             main_page_locators.ingredient_link_by_name(name),
             main_page_locators.CONSTRUCTOR_BASKET,
@@ -62,10 +59,4 @@ class MainPage(BasePage):
 
     @allure.step("Получаем номер оформленного заказа")
     def get_order_number_from_modal(self):
-        self.wait_for_visibility(modal_locators.ORDER_NUMBER_TEXT, timeout=20)
-        for _ in range(40):
-            text = self.driver.find_element(*modal_locators.ORDER_NUMBER_TEXT).text.strip()
-            if len(text) >= 5:
-                return int(text)
-            time.sleep(0.5)
-        return 0
+        return int(self.get_text(modal_locators.ORDER_NUMBER_READY))
