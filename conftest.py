@@ -18,7 +18,10 @@ from urls import (
 
 @pytest.fixture(params=["chrome", "firefox"], scope="class")
 def driver(request):
-    browser = webdriver.Chrome() if request.param == "chrome" else webdriver.Firefox()
+    if request.param == "chrome":
+        browser = webdriver.Chrome()
+    else:
+        browser = webdriver.Firefox()
     yield browser
     browser.quit()
 
