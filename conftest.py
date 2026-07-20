@@ -12,7 +12,7 @@ from pages.login_page import LoginPage
 from urls import BASE_URL
 
 
-@pytest.fixture(params=["chrome", "firefox"])
+@pytest.fixture(params=["chrome", "firefox"], scope="class")
 def driver(request):
     browser_name = request.param
     browser = None
