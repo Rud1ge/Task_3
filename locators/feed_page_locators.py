@@ -12,15 +12,21 @@ TODAY_DONE_COUNTER = (
 ORDER_MODAL = (By.XPATH, ".//section[contains(@class, 'Modal_modal_opened')]")
 
 
+def format_order_number(order_number):
+    return f"{order_number:07d}"
+
+
 def feed_order_link(order_number):
+    number = format_order_number(order_number)
     return (
         By.XPATH,
-        f".//a[contains(@href, '/feed/') and contains(., '#{order_number:07d}')]",
+        f".//a[contains(@href, '/feed/') and contains(., '#{number}')]",
     )
 
 
 def in_progress_order(order_number):
+    number = format_order_number(order_number)
     return (
         By.XPATH,
-        ".//p[contains(text(), 'В работе')]/following-sibling::ul" f"/li[contains(., '{order_number:07d}')]",
+        f".//p[contains(text(), 'В работе')]/following-sibling::ul/li[contains(., '{number}')]",
     )
