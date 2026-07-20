@@ -25,31 +25,12 @@ class FeedPage(BasePage):
 
     @allure.step("Проверяем, что заказ #{order_number} в работе")
     def is_order_in_progress(self, order_number):
-        self.wait_for_visibility(feed_page_locators.in_progress_order(order_number))
-        return True
+        return self.wait_for_visibility(feed_page_locators.in_progress_order(order_number)).is_displayed()
 
     @allure.step("Проверяем, что заказ #{order_number} есть в ленте")
     def is_order_in_feed(self, order_number):
-        self.wait_for_visibility(feed_page_locators.feed_order_link(order_number))
-        return True
+        return self.wait_for_visibility(feed_page_locators.feed_order_link(order_number)).is_displayed()
 
     @allure.step("Проверяем, что модалка заказа открыта")
     def is_order_modal_visible(self):
-        self.wait_for_visibility(feed_page_locators.ORDER_MODAL)
-        return True
-
-    @allure.step("Ждём увеличения счётчика «Выполнено за всё время»")
-    def wait_until_total_done_increases(self, previous_value):
-        for _ in range(20):
-            self.driver.refresh()
-            self.wait_for_visibility(feed_page_locators.FEED_TITLE)
-            if self.get_total_done_count() > previous_value:
-                return
-
-    @allure.step("Ждём увеличения счётчика «Выполнено за сегодня»")
-    def wait_until_today_done_increases(self, previous_value):
-        for _ in range(20):
-            self.driver.refresh()
-            self.wait_for_visibility(feed_page_locators.FEED_TITLE)
-            if self.get_today_done_count() > previous_value:
-                return
+        return self.wait_for_visibility(feed_page_locators.ORDER_MODAL).is_displayed()

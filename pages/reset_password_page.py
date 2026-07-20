@@ -11,5 +11,4 @@ class ResetPasswordPage(BasePage):
 
     @allure.step("Проверяем, что поле пароля подсвечено")
     def is_password_field_active(self):
-        label = self.wait_for_visibility(reset_password_page_locators.PASSWORD_FIELD_LABEL)
-        return "input__placeholder-focused" in label.get_attribute("class")
+        return self.wait_for_visibility(reset_password_page_locators.PASSWORD_FIELD_FOCUSED).is_displayed()

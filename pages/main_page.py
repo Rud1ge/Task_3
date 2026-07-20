@@ -44,8 +44,7 @@ class MainPage(BasePage):
 
     @allure.step("Проверяем, что модалка ингредиента открыта")
     def is_ingredient_modal_visible(self):
-        self.wait_for_visibility(main_page_locators.INGREDIENT_MODAL)
-        return True
+        return self.wait_for_visibility(main_page_locators.INGREDIENT_MODAL).is_displayed()
 
     @allure.step("Закрываем модалку")
     def close_modal(self):
@@ -54,8 +53,7 @@ class MainPage(BasePage):
 
     @allure.step("Проверяем, что модалка закрыта")
     def is_modal_closed(self):
-        self.wait_until_invisible(main_page_locators.INGREDIENT_MODAL)
-        return True
+        return self.wait_until_invisible(main_page_locators.INGREDIENT_MODAL)
 
     @allure.step("Получаем номер оформленного заказа")
     def get_order_number_from_modal(self):
