@@ -12,7 +12,6 @@ class FeedPage(BasePage):
     def open(self):
         self.driver.get(FEED_URL)
         self.wait_for_visibility(feed_page_locators.FEED_TITLE)
-        self.wait_for_loading_finished(feed_page_locators.FEED_TITLE)
 
     @allure.step("Открываем заказ #{order_number} в ленте")
     def click_order(self, order_number):

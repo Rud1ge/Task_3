@@ -12,7 +12,6 @@ class MainPage(BasePage):
     def open(self):
         self.driver.get(CONSTRUCTOR_URL)
         self.wait_for_visibility(main_page_locators.CONSTRUCTOR_TITLE)
-        self.wait_for_loading_finished(main_page_locators.CONSTRUCTOR_TITLE)
 
     @allure.step("Открываем вкладку «Соусы»")
     def open_sauces_tab(self):

@@ -1,5 +1,4 @@
 import allure
-from selenium.common.exceptions import TimeoutException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
@@ -23,14 +22,6 @@ class BasePage:
     def wait_until_invisible(self, locator, timeout=3):
         return WebDriverWait(self.driver, timeout).until(expected_conditions.invisibility_of_element_located(locator))
 
-    def wait_for_loading_finished(self, title_locator, timeout=5):
-        # В Firefox спиннер иногда зависает — refresh снимает оверлей.
-        try:
-            self.wait_until_invisible(modal_locators.LOADING_OVERLAY, timeout)
-        except TimeoutException:
-            self.driver.refresh()
-            self.wait_for_visibility(title_locator)
-
     def click(self, locator, timeout=10):
         self.wait_until_invisible(modal_locators.LOADING_OVERLAY, timeout)
         self.wait_for_clickable(locator, timeout).click()
@@ -46,7 +37,7 @@ class BasePage:
     def drag_and_drop(self, source_locator, target_locator, timeout=3):
         source = self.wait_for_visibility(source_locator, timeout)
         target = self.wait_for_visibility(target_locator, timeout)
-        ActionChains(self.driver).move_to_element(source).drag_and_drop(source, target).perform()
+        ActionChains(self.driver).drag_and_drop(source, target).perform()
 
     @allure.step("Переходим в конструктор")
     def go_to_constructor(self):
