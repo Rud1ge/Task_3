@@ -10,30 +10,30 @@ class BasePage:
     def __init__(self, driver):
         self.driver = driver
 
-    def wait_for_visibility(self, locator, timeout=5):
+    def wait_for_visibility(self, locator, timeout=3):
         return WebDriverWait(self.driver, timeout).until(expected_conditions.visibility_of_element_located(locator))
 
-    def wait_for_clickable(self, locator, timeout=5):
+    def wait_for_clickable(self, locator, timeout=3):
         return WebDriverWait(self.driver, timeout).until(expected_conditions.element_to_be_clickable(locator))
 
-    def wait_for_url_contains(self, url_part, timeout=5):
+    def wait_for_url_contains(self, url_part, timeout=3):
         return WebDriverWait(self.driver, timeout).until(expected_conditions.url_contains(url_part))
 
-    def wait_until_invisible(self, locator, timeout=5):
+    def wait_until_invisible(self, locator, timeout=3):
         return WebDriverWait(self.driver, timeout).until(expected_conditions.invisibility_of_element_located(locator))
 
-    def click(self, locator, timeout=5):
+    def click(self, locator, timeout=3):
         self.wait_for_clickable(locator, timeout).click()
 
-    def send_keys(self, locator, text, timeout=5):
+    def send_keys(self, locator, text, timeout=3):
         element = self.wait_for_visibility(locator, timeout)
         element.clear()
         element.send_keys(text)
 
-    def get_text(self, locator, timeout=5):
+    def get_text(self, locator, timeout=3):
         return self.wait_for_visibility(locator, timeout).text
 
-    def drag_and_drop(self, source_locator, target_locator, timeout=5):
+    def drag_and_drop(self, source_locator, target_locator, timeout=3):
         source = self.wait_for_visibility(source_locator, timeout)
         target = self.wait_for_visibility(target_locator, timeout)
         # move_to_element нужен: без него элемент вне viewport не попадает в корзину (счётчик не растёт).

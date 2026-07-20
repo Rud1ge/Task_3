@@ -1,4 +1,6 @@
 import allure
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
 
 from locators import main_page_locators, modal_locators
 from pages.base_page import BasePage
@@ -57,4 +59,8 @@ class MainPage(BasePage):
 
     @allure.step("Получаем номер оформленного заказа")
     def get_order_number_from_modal(self):
-        return int(self.get_text(modal_locators.ORDER_NUMBER_READY))
+        return int(
+            WebDriverWait(self.driver, 10)
+            .until(expected_conditions.visibility_of_element_located(modal_locators.ORDER_NUMBER_READY))
+            .text
+        )

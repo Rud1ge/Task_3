@@ -1,4 +1,6 @@
 import allure
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
 
 from locators import feed_page_locators
 from pages.base_page import BasePage
@@ -25,11 +27,21 @@ class FeedPage(BasePage):
 
     @allure.step("Проверяем, что заказ #{order_number} в работе")
     def is_order_in_progress(self, order_number):
-        return self.wait_for_visibility(feed_page_locators.in_progress_order(order_number)).is_displayed()
+        return (
+            WebDriverWait(self.driver, 10)
+            .until(
+                expected_conditions.visibility_of_element_located(feed_page_locators.in_progress_order(order_number))
+            )
+            .is_displayed()
+        )
 
     @allure.step("Проверяем, что заказ #{order_number} есть в ленте")
     def is_order_in_feed(self, order_number):
-        return self.wait_for_visibility(feed_page_locators.feed_order_link(order_number)).is_displayed()
+        return (
+            WebDriverWait(self.driver, 10)
+            .until(expected_conditions.visibility_of_element_located(feed_page_locators.feed_order_link(order_number)))
+            .is_displayed()
+        )
 
     @allure.step("Проверяем, что модалка заказа открыта")
     def is_order_modal_visible(self):
