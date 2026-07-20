@@ -17,8 +17,5 @@ class AccountPage(BasePage):
 
     @allure.step("Проверяем заказ #{order_number} в истории")
     def is_order_in_history(self, order_number):
-        self.wait_for_visibility(
-            account_page_locators.order_number_in_history(order_number),
-            timeout=15,
-        )
+        self.wait_for_visibility(account_page_locators.order_number_in_history(order_number))
         return True

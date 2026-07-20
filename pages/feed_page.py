@@ -25,7 +25,7 @@ class FeedPage(BasePage):
 
     @allure.step("Проверяем, что заказ #{order_number} в работе")
     def is_order_in_progress(self, order_number):
-        self.wait_for_visibility(feed_page_locators.in_progress_order(order_number), timeout=20)
+        self.wait_for_visibility(feed_page_locators.in_progress_order(order_number))
         return True
 
     @allure.step("Проверяем, что заказ #{order_number} есть в ленте")

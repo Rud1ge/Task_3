@@ -20,4 +20,4 @@ class LoginPage(BasePage):
         self.send_keys(login_page_locators.EMAIL_INPUT, email)
         self.send_keys(login_page_locators.PASSWORD_INPUT, password)
         self.click(login_page_locators.LOGIN_BUTTON)
-        self.wait_until_invisible(login_page_locators.PAGE_TITLE, timeout=10)
+        self.wait_until_invisible(login_page_locators.PAGE_TITLE)

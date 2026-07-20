@@ -11,33 +11,39 @@ class BasePage:
     def __init__(self, driver):
         self.driver = driver
 
-    def wait_for_visibility(self, locator, timeout=DEFAULT_TIMEOUT):
-        return WebDriverWait(self.driver, timeout).until(expected_conditions.visibility_of_element_located(locator))
+    def wait_for_visibility(self, locator):
+        return WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
+            expected_conditions.visibility_of_element_located(locator)
+        )
 
-    def wait_for_clickable(self, locator, timeout=DEFAULT_TIMEOUT):
-        return WebDriverWait(self.driver, timeout).until(expected_conditions.element_to_be_clickable(locator))
+    def wait_for_clickable(self, locator):
+        return WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
+            expected_conditions.element_to_be_clickable(locator)
+        )
 
-    def wait_for_url_contains(self, url_part, timeout=DEFAULT_TIMEOUT):
-        return WebDriverWait(self.driver, timeout).until(expected_conditions.url_contains(url_part))
+    def wait_for_url_contains(self, url_part):
+        return WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(expected_conditions.url_contains(url_part))
 
-    def wait_until_invisible(self, locator, timeout=DEFAULT_TIMEOUT):
-        return WebDriverWait(self.driver, timeout).until(expected_conditions.invisibility_of_element_located(locator))
+    def wait_until_invisible(self, locator):
+        return WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
+            expected_conditions.invisibility_of_element_located(locator)
+        )
 
-    def click(self, locator, timeout=DEFAULT_TIMEOUT):
-        element = self.wait_for_clickable(locator, timeout)
-        self.driver.execute_script("arguments[0].click();", element)
+    def click(self, locator):
+        self.wait_for_clickable(locator).click()
 
-    def send_keys(self, locator, text, timeout=DEFAULT_TIMEOUT):
-        element = self.wait_for_visibility(locator, timeout)
+    def send_keys(self, locator, text):
+        element = self.wait_for_visibility(locator)
         element.clear()
         element.send_keys(text)
 
-    def get_text(self, locator, timeout=DEFAULT_TIMEOUT):
-        return self.wait_for_visibility(locator, timeout).text
+    def get_text(self, locator):
+        return self.wait_for_visibility(locator).text
 
-    def drag_and_drop(self, source_locator, target_locator, timeout=DEFAULT_TIMEOUT):
-        source = self.wait_for_visibility(source_locator, timeout)
-        target = self.wait_for_visibility(target_locator, timeout)
+    def drag_and_drop(self, source_locator, target_locator):
+        source = self.wait_for_visibility(source_locator)
+        target = self.wait_for_visibility(target_locator)
+        # HTML5 DnD: ActionChains здесь не срабатывает
         self.driver.execute_script(
             """
             const source = arguments[0];
