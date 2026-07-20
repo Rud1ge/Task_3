@@ -3,8 +3,8 @@ import string
 
 import pytest
 import requests
-from selenium import webdriver
 
+from driver_factory import DriverFactory
 from pages.login_page import LoginPage
 from urls import (
     BASE_URL,
@@ -17,10 +17,7 @@ from urls import (
 
 @pytest.fixture(params=["chrome", "firefox"], scope="class")
 def driver(request):
-    if request.param == "chrome":
-        browser = webdriver.Chrome()
-    else:
-        browser = webdriver.Firefox()
+    browser = DriverFactory.get_driver(request.param)
     yield browser
     browser.quit()
 
@@ -29,6 +26,8 @@ def driver(request):
 def reset_browser_state(driver):
     driver.get(BASE_URL)
     driver.delete_all_cookies()
+    driver.execute_script("window.localStorage.clear(); window.sessionStorage.clear();")
+    driver.get(BASE_URL)
     yield
 
 
