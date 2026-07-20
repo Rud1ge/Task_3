@@ -30,7 +30,7 @@ class TestOrderFeed:
         feed_page = FeedPage(driver)
         feed_page.open()
 
-        assert order_number in feed_page.get_order_numbers_from_feed()
+        assert feed_page.is_order_in_feed(order_number)
 
     @allure.title("Счётчик «Выполнено за всё время» увеличивается")
     @allure.description("После создания заказа общий счётчик выполненных заказов растёт.")
@@ -50,8 +50,7 @@ class TestOrderFeed:
             },
             headers={"Authorization": user["accessToken"]},
         )
-        feed_page.open()
-        feed_page.wait_for_counter_increase(feed_page.get_total_done_count, total_before)
+        feed_page.wait_until_total_done_increases(total_before)
 
         assert feed_page.get_total_done_count() > total_before
 
@@ -73,8 +72,7 @@ class TestOrderFeed:
             },
             headers={"Authorization": user["accessToken"]},
         )
-        feed_page.open()
-        feed_page.wait_for_counter_increase(feed_page.get_today_done_count, today_before)
+        feed_page.wait_until_today_done_increases(today_before)
 
         assert feed_page.get_today_done_count() > today_before
 
@@ -94,6 +92,5 @@ class TestOrderFeed:
             },
             headers={"Authorization": user["accessToken"]},
         ).json()["order"]["number"]
-        feed_page.wait_until_order_in_progress(order_number)
 
         assert feed_page.is_order_in_progress(order_number)
