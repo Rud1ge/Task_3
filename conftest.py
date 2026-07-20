@@ -1,7 +1,6 @@
 import random
 import string
 
-import allure
 import pytest
 import requests
 from selenium import webdriver
