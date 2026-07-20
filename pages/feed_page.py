@@ -20,29 +20,20 @@ class FeedPage(BasePage):
 
     @allure.step("Получаем значение «Выполнено за всё время»")
     def get_total_done_count(self):
-        return int(
-            re.sub(r"\D", "", self.get_text(feed_page_locators.TOTAL_DONE_COUNTER))
-        )
+        return int(re.sub(r"\D", "", self.get_text(feed_page_locators.TOTAL_DONE_COUNTER)))
 
     @allure.step("Получаем значение «Выполнено за сегодня»")
     def get_today_done_count(self):
-        return int(
-            re.sub(r"\D", "", self.get_text(feed_page_locators.TODAY_DONE_COUNTER))
-        )
+        return int(re.sub(r"\D", "", self.get_text(feed_page_locators.TODAY_DONE_COUNTER)))
 
     @allure.step("Проверяем, что заказ #{order_number} в работе")
     def is_order_in_progress(self, order_number):
         number = f"{order_number:07d}"
-        return any(
-            number in item.text
-            for item in self.find_elements(feed_page_locators.IN_PROGRESS_ORDER_ITEMS)
-        )
+        return any(number in item.text for item in self.find_elements(feed_page_locators.IN_PROGRESS_ORDER_ITEMS))
 
     @allure.step("Ждём появления заказа #{order_number} в разделе «В работе»")
     def wait_until_order_in_progress(self, order_number, timeout=20):
-        WebDriverWait(self.driver, timeout, poll_frequency=0.3).until(
-            lambda _: self.is_order_in_progress(order_number)
-        )
+        WebDriverWait(self.driver, timeout, poll_frequency=0.3).until(lambda _: self.is_order_in_progress(order_number))
 
     @allure.step("Получаем номера заказов из ленты")
     def get_order_numbers_from_feed(self):

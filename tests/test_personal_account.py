@@ -8,9 +8,7 @@ from urls import ACCOUNT_ORDERS_URL, ACCOUNT_URL, BASE_URL, LOGIN_URL
 @allure.link(BASE_URL, name="Stellar Burgers")
 class TestPersonalAccount:
     @allure.title("Переход в личный кабинет")
-    @allure.description(
-        "После авторизации клик по «Личный кабинет» открывает /account."
-    )
+    @allure.description("После авторизации клик по «Личный кабинет» открывает /account.")
     def test_navigate_to_account(self, driver, authorized_user):
         LoginPage(driver).go_to_personal_account()
 

@@ -23,11 +23,7 @@ class MainPage(BasePage):
 
     @allure.step("Получаем счётчик ингредиента: {name}")
     def get_ingredient_counter(self, name):
-        return int(
-            self.wait_for_visibility(
-                main_page_locators.ingredient_counter_by_name(name)
-            ).text
-        )
+        return int(self.wait_for_visibility(main_page_locators.ingredient_counter_by_name(name)).text)
 
     @allure.step("Добавляем булку в заказ: {name}")
     def add_bun_to_order(self, name):
@@ -76,11 +72,6 @@ class MainPage(BasePage):
     @allure.step("Получаем номер оформленного заказа")
     def get_order_number_from_modal(self):
         WebDriverWait(self.driver, 20).until(
-            lambda driver: len(
-                driver.find_element(*modal_locators.ORDER_NUMBER_TEXT).text.strip()
-            )
-            >= 5
+            lambda driver: len(driver.find_element(*modal_locators.ORDER_NUMBER_TEXT).text.strip()) >= 5
         )
-        return int(
-            self.driver.find_element(*modal_locators.ORDER_NUMBER_TEXT).text.strip()
-        )
+        return int(self.driver.find_element(*modal_locators.ORDER_NUMBER_TEXT).text.strip())

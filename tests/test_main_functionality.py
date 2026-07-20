@@ -26,9 +26,7 @@ class TestMainFunctionality:
         assert FEED_URL in driver.current_url
 
     @allure.title("Открытие модалки ингредиента")
-    @allure.description(
-        "При клике на ингредиент появляется всплывающее окно с деталями."
-    )
+    @allure.description("При клике на ингредиент появляется всплывающее окно с деталями.")
     def test_ingredient_modal_opens(self, driver, ingredients):
         main_page = MainPage(driver)
         main_page.open()
@@ -55,15 +53,10 @@ class TestMainFunctionality:
         counter_before = main_page.get_ingredient_counter(ingredients["sauce_name"])
         main_page.add_sauce_to_order(ingredients["sauce_name"])
 
-        assert (
-            main_page.get_ingredient_counter(ingredients["sauce_name"])
-            == counter_before + 1
-        )
+        assert main_page.get_ingredient_counter(ingredients["sauce_name"]) == counter_before + 1
 
     @allure.title("Оформление заказа авторизованным пользователем")
-    @allure.description(
-        "Залогиненный пользователь может оформить заказ из конструктора."
-    )
+    @allure.description("Залогиненный пользователь может оформить заказ из конструктора.")
     def test_logged_in_user_can_place_order(self, driver, authorized_user, ingredients):
         main_page = MainPage(driver)
         main_page.open()
