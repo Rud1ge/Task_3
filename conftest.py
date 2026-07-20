@@ -47,7 +47,6 @@ def user():
         "password": password,
         "name": name,
         "accessToken": body["accessToken"],
-        "refreshToken": body["refreshToken"],
     }
     yield data
     requests.delete(USER_ENDPOINT, headers={"Authorization": data["accessToken"]})
@@ -56,8 +55,13 @@ def user():
 @pytest.fixture
 def ingredients():
     items = requests.get(INGREDIENTS_ENDPOINT).json()["data"]
-    bun = next(item for item in items if item["type"] == "bun")
-    sauce = next(item for item in items if item["type"] == "sauce")
+    bun = None
+    sauce = None
+    for item in items:
+        if bun is None and item["type"] == "bun":
+            bun = item
+        if sauce is None and item["type"] == "sauce":
+            sauce = item
     return {
         "bun_name": bun["name"],
         "sauce_name": sauce["name"],
