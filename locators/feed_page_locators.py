@@ -11,7 +11,10 @@ TODAY_DONE_COUNTER = (
 )
 FEED_ORDER_LINKS = (By.XPATH, ".//a[contains(@href, '/feed/')]")
 ORDER_MODAL = (By.XPATH, ".//section[contains(@class, 'Modal_modal_opened')]")
-IN_PROGRESS_ORDER_ITEMS = (By.CSS_SELECTOR, "ul[class*='OrderFeed_orderListReady'] li")
+IN_PROGRESS_ORDER_ITEMS = (
+    By.XPATH,
+    ".//p[contains(text(), 'В работе')]/following-sibling::ul/li",
+)
 
 
 def feed_order_link(order_number):
