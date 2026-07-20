@@ -1,5 +1,6 @@
 import allure
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver import ActionChains
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -45,26 +46,7 @@ class BasePage:
     def drag_and_drop(self, source_locator, target_locator, timeout=3):
         source = self.wait_for_visibility(source_locator, timeout)
         target = self.wait_for_visibility(target_locator, timeout)
-        # HTML5 DnD: ActionChains работает в Chrome, в Firefox — нет (geckodriver).
-        self.driver.execute_script(
-            """
-            const source = arguments[0];
-            const target = arguments[1];
-            const dataTransfer = {
-                data: {},
-                setData(key, value) { this.data[key] = value; },
-                getData(key) { return this.data[key]; },
-            };
-            ["dragstart", "dragenter", "dragover", "drop", "dragend"].forEach((type, index) => {
-                const element = index === 0 || index === 4 ? source : target;
-                const event = new Event(type, { bubbles: true, cancelable: true });
-                event.dataTransfer = dataTransfer;
-                element.dispatchEvent(event);
-            });
-            """,
-            source,
-            target,
-        )
+        ActionChains(self.driver).move_to_element(source).drag_and_drop(source, target).perform()
 
     @allure.step("Переходим в конструктор")
     def go_to_constructor(self):
