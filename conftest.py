@@ -28,16 +28,15 @@ def driver(request):
 @pytest.fixture(autouse=True)
 def reset_browser_state(driver):
     driver.get(BASE_URL)
-    driver.execute_script("localStorage.clear(); sessionStorage.clear();")
     driver.delete_all_cookies()
     yield
 
 
 @pytest.fixture
 def user():
-    email = f"{''.join(random.choices(string.ascii_lowercase, k=10))}@example.com"
-    password = "".join(random.choices(string.ascii_lowercase, k=10))
-    name = "".join(random.choices(string.ascii_lowercase, k=10))
+    email = f"{''.join(random.choices(string.ascii_lowercase, k=8))}@example.com"
+    password = "".join(random.choices(string.ascii_lowercase, k=8))
+    name = "".join(random.choices(string.ascii_lowercase, k=8))
     body = requests.post(
         REGISTER_ENDPOINT,
         json={"email": email, "password": password, "name": name},
@@ -71,18 +70,26 @@ def ingredients():
 
 
 @pytest.fixture
-def order(user, ingredients):
-    return requests.post(
-        ORDERS_ENDPOINT,
-        json={
-            "ingredients": [
-                ingredients["bun_id"],
-                ingredients["sauce_id"],
-                ingredients["bun_id"],
-            ]
-        },
-        headers={"Authorization": user["accessToken"]},
-    ).json()
+def create_order(user, ingredients):
+    def _create_order():
+        return requests.post(
+            ORDERS_ENDPOINT,
+            json={
+                "ingredients": [
+                    ingredients["bun_id"],
+                    ingredients["sauce_id"],
+                    ingredients["bun_id"],
+                ]
+            },
+            headers={"Authorization": user["accessToken"]},
+        ).json()
+
+    return _create_order
+
+
+@pytest.fixture
+def order(create_order):
+    return create_order()
 
 
 @pytest.fixture
