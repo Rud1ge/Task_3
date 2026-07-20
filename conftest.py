@@ -1,18 +1,15 @@
-import random
-import string
-
 import pytest
-import requests
 
 from driver_factory import DriverFactory
-from pages.login_page import LoginPage
-from urls import (
-    BASE_URL,
-    INGREDIENTS_ENDPOINT,
-    ORDERS_ENDPOINT,
-    REGISTER_ENDPOINT,
-    USER_ENDPOINT,
+from helpers import (
+    clear_browser_session,
+    create_order,
+    delete_user,
+    get_ingredients,
+    register_user,
 )
+from pages.login_page import LoginPage
+from urls import BASE_URL
 
 
 @pytest.fixture(params=["chrome", "firefox"], scope="class")
@@ -25,70 +22,26 @@ def driver(request):
 @pytest.fixture(autouse=True)
 def reset_browser_state(driver):
     driver.get(BASE_URL)
-    driver.delete_all_cookies()
-    driver.execute_script("window.localStorage.clear(); window.sessionStorage.clear();")
+    clear_browser_session(driver)
     driver.get(BASE_URL)
     yield
 
 
 @pytest.fixture
 def user():
-    email = f"{''.join(random.choices(string.ascii_lowercase, k=8))}@example.com"
-    password = "".join(random.choices(string.ascii_lowercase, k=8))
-    name = "".join(random.choices(string.ascii_lowercase, k=8))
-    body = requests.post(
-        REGISTER_ENDPOINT,
-        json={"email": email, "password": password, "name": name},
-    ).json()
-    data = {
-        "email": email,
-        "password": password,
-        "name": name,
-        "accessToken": body["accessToken"],
-    }
+    data = register_user()
     yield data
-    requests.delete(USER_ENDPOINT, headers={"Authorization": data["accessToken"]})
+    delete_user(data["accessToken"])
 
 
 @pytest.fixture
 def ingredients():
-    items = requests.get(INGREDIENTS_ENDPOINT).json()["data"]
-    bun = None
-    sauce = None
-    for item in items:
-        if bun is None and item["type"] == "bun":
-            bun = item
-        if sauce is None and item["type"] == "sauce":
-            sauce = item
-    return {
-        "bun_name": bun["name"],
-        "sauce_name": sauce["name"],
-        "bun_id": bun["_id"],
-        "sauce_id": sauce["_id"],
-    }
+    return get_ingredients()
 
 
 @pytest.fixture
-def create_order(user, ingredients):
-    def _create_order():
-        return requests.post(
-            ORDERS_ENDPOINT,
-            json={
-                "ingredients": [
-                    ingredients["bun_id"],
-                    ingredients["sauce_id"],
-                    ingredients["bun_id"],
-                ]
-            },
-            headers={"Authorization": user["accessToken"]},
-        ).json()
-
-    return _create_order
-
-
-@pytest.fixture
-def order(create_order):
-    return create_order()
+def order(user, ingredients):
+    return create_order(user, ingredients)
 
 
 @pytest.fixture

@@ -1,5 +1,6 @@
 import allure
 
+from helpers import create_order
 from pages.account_page import AccountPage
 from pages.feed_page import FeedPage
 from pages.login_page import LoginPage
@@ -33,31 +34,30 @@ class TestOrderFeed:
 
     @allure.title("Счётчик «Выполнено за всё время» увеличивается")
     @allure.description("После создания заказа общий счётчик выполненных заказов растёт.")
-    def test_total_done_counter_increases(self, driver, create_order):
+    def test_total_done_counter_increases(self, driver, user, ingredients):
         feed_page = FeedPage(driver)
         feed_page.open()
         total_before = feed_page.get_total_done_count()
-        order_number = create_order()["order"]["number"]
+        order_number = create_order(user, ingredients)["order"]["number"]
         feed_page.is_order_in_progress(order_number)
 
         assert feed_page.get_total_done_count() > total_before
 
     @allure.title("Счётчик «Выполнено за сегодня» увеличивается")
     @allure.description("После создания заказа дневной счётчик выполненных заказов растёт.")
-    def test_today_done_counter_increases(self, driver, create_order):
+    def test_today_done_counter_increases(self, driver, user, ingredients):
         feed_page = FeedPage(driver)
         feed_page.open()
         today_before = feed_page.get_today_done_count()
-        order_number = create_order()["order"]["number"]
+        order_number = create_order(user, ingredients)["order"]["number"]
         feed_page.is_order_in_progress(order_number)
 
         assert feed_page.get_today_done_count() > today_before
 
     @allure.title("Новый заказ появляется в разделе «В работе»")
     @allure.description("После оформления заказа его номер отображается в блоке «В работе».")
-    def test_new_order_appears_in_progress(self, driver, create_order):
+    def test_new_order_appears_in_progress(self, driver, order):
         feed_page = FeedPage(driver)
         feed_page.open()
-        order_number = create_order()["order"]["number"]
 
-        assert feed_page.is_order_in_progress(order_number)
+        assert feed_page.is_order_in_progress(order["order"]["number"])
