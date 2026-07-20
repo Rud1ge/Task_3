@@ -17,7 +17,7 @@ from urls import (
 
 @pytest.fixture(params=["chrome", "firefox"], scope="class")
 def driver(request):
-    browser = DriverFactory.get_driver(request.param)
+    browser = DriverFactory.getWebdriver(request.param)
     yield browser
     browser.quit()
 
