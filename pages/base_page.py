@@ -1,9 +1,9 @@
 import allure
-from selenium.webdriver import ActionChains
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-from locators import header_locators
+from locators import header_locators, modal_locators
 
 
 class BasePage:
@@ -22,7 +22,16 @@ class BasePage:
     def wait_until_invisible(self, locator, timeout=3):
         return WebDriverWait(self.driver, timeout).until(expected_conditions.invisibility_of_element_located(locator))
 
-    def click(self, locator, timeout=3):
+    def wait_for_loading_finished(self, title_locator, timeout=5):
+        # В Firefox спиннер иногда зависает — refresh снимает оверлей.
+        try:
+            self.wait_until_invisible(modal_locators.LOADING_OVERLAY, timeout)
+        except TimeoutException:
+            self.driver.refresh()
+            self.wait_for_visibility(title_locator)
+
+    def click(self, locator, timeout=10):
+        self.wait_until_invisible(modal_locators.LOADING_OVERLAY, timeout)
         self.wait_for_clickable(locator, timeout).click()
 
     def send_keys(self, locator, text, timeout=3):
@@ -36,8 +45,26 @@ class BasePage:
     def drag_and_drop(self, source_locator, target_locator, timeout=3):
         source = self.wait_for_visibility(source_locator, timeout)
         target = self.wait_for_visibility(target_locator, timeout)
-        # move_to_element нужен: без него элемент вне viewport не попадает в корзину (счётчик не растёт).
-        ActionChains(self.driver).move_to_element(source).drag_and_drop(source, target).perform()
+        # HTML5 DnD: ActionChains работает в Chrome, в Firefox — нет (geckodriver).
+        self.driver.execute_script(
+            """
+            const source = arguments[0];
+            const target = arguments[1];
+            const dataTransfer = {
+                data: {},
+                setData(key, value) { this.data[key] = value; },
+                getData(key) { return this.data[key]; },
+            };
+            ["dragstart", "dragenter", "dragover", "drop", "dragend"].forEach((type, index) => {
+                const element = index === 0 || index === 4 ? source : target;
+                const event = new Event(type, { bubbles: true, cancelable: true });
+                event.dataTransfer = dataTransfer;
+                element.dispatchEvent(event);
+            });
+            """,
+            source,
+            target,
+        )
 
     @allure.step("Переходим в конструктор")
     def go_to_constructor(self):

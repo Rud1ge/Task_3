@@ -12,6 +12,7 @@ class MainPage(BasePage):
     def open(self):
         self.driver.get(CONSTRUCTOR_URL)
         self.wait_for_visibility(main_page_locators.CONSTRUCTOR_TITLE)
+        self.wait_for_loading_finished(main_page_locators.CONSTRUCTOR_TITLE)
 
     @allure.step("Открываем вкладку «Соусы»")
     def open_sauces_tab(self):
@@ -60,7 +61,7 @@ class MainPage(BasePage):
     @allure.step("Получаем номер оформленного заказа")
     def get_order_number_from_modal(self):
         return int(
-            WebDriverWait(self.driver, 10)
+            WebDriverWait(self.driver, 20)
             .until(expected_conditions.visibility_of_element_located(modal_locators.ORDER_NUMBER_READY))
             .text
         )

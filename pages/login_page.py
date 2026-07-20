@@ -10,6 +10,7 @@ class LoginPage(BasePage):
     def open(self):
         self.driver.get(LOGIN_URL)
         self.wait_for_visibility(login_page_locators.PAGE_TITLE)
+        self.wait_for_loading_finished(login_page_locators.PAGE_TITLE)
 
     @allure.step("Переходим на страницу восстановления пароля")
     def click_forgot_password(self):

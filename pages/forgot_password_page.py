@@ -10,6 +10,7 @@ class ForgotPasswordPage(BasePage):
     def open(self):
         self.driver.get(FORGOT_PASSWORD_URL)
         self.wait_for_visibility(forgot_password_page_locators.PAGE_TITLE)
+        self.wait_for_loading_finished(forgot_password_page_locators.PAGE_TITLE)
 
     @allure.step("Вводим email: {email}")
     def enter_email(self, email):
