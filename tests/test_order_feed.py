@@ -37,8 +37,8 @@ class TestOrderFeed:
         feed_page = FeedPage(driver)
         feed_page.open()
         total_before = feed_page.get_total_done_count()
-        create_order()
-        feed_page.open()
+        order_number = create_order()["order"]["number"]
+        feed_page.is_order_in_progress(order_number)
 
         assert feed_page.get_total_done_count() > total_before
 
@@ -48,8 +48,8 @@ class TestOrderFeed:
         feed_page = FeedPage(driver)
         feed_page.open()
         today_before = feed_page.get_today_done_count()
-        create_order()
-        feed_page.open()
+        order_number = create_order()["order"]["number"]
+        feed_page.is_order_in_progress(order_number)
 
         assert feed_page.get_today_done_count() > today_before
 
