@@ -7,7 +7,7 @@ from pages.base_page import BasePage
 class ResetPasswordPage(BasePage):
     @allure.step("Нажимаем кнопку показать/скрыть пароль")
     def click_password_visibility_toggle(self):
-        self.click(reset_password_page_locators.PASSWORD_VISIBILITY_TOGGLE)
+        self.wait_for_clickable(reset_password_page_locators.PASSWORD_VISIBILITY_TOGGLE).click()
 
     @allure.step("Проверяем, что поле пароля подсвечено")
     def is_password_field_active(self):

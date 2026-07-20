@@ -25,7 +25,7 @@ class TestPasswordRecovery:
         forgot_password_page.enter_email(user["email"])
         forgot_password_page.click_restore()
 
-        assert forgot_password_page.is_reset_page_open()
+        assert "/reset-password" in driver.current_url
 
     @allure.title("Переключатель видимости пароля подсвечивает поле")
     @allure.description("После восстановления пароля клик по иконке подсвечивает поле нового пароля.")

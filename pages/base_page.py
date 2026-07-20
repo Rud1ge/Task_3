@@ -23,9 +23,6 @@ class BasePage:
     def wait_until_invisible(self, locator, timeout=DEFAULT_TIMEOUT):
         return WebDriverWait(self.driver, timeout).until(expected_conditions.invisibility_of_element_located(locator))
 
-    def find_elements(self, locator):
-        return self.driver.find_elements(*locator)
-
     def click(self, locator, timeout=DEFAULT_TIMEOUT):
         element = self.wait_for_clickable(locator, timeout)
         self.driver.execute_script("arguments[0].click();", element)
@@ -37,9 +34,6 @@ class BasePage:
 
     def get_text(self, locator, timeout=DEFAULT_TIMEOUT):
         return self.wait_for_visibility(locator, timeout).text
-
-    def is_displayed(self, locator, timeout=DEFAULT_TIMEOUT):
-        return self.wait_for_visibility(locator, timeout).is_displayed()
 
     def drag_and_drop(self, source_locator, target_locator, timeout=DEFAULT_TIMEOUT):
         source = self.wait_for_visibility(source_locator, timeout)

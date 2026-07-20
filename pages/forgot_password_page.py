@@ -19,6 +19,3 @@ class ForgotPasswordPage(BasePage):
     def click_restore(self):
         self.click(forgot_password_page_locators.RESTORE_BUTTON)
         self.wait_for_url_contains("/reset-password")
-
-    def is_reset_page_open(self):
-        return "/reset-password" in self.driver.current_url

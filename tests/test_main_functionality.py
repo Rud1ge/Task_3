@@ -60,7 +60,8 @@ class TestMainFunctionality:
     def test_logged_in_user_can_place_order(self, driver, authorized_user, ingredients):
         main_page = MainPage(driver)
         main_page.open()
-        main_page.build_burger(ingredients["bun_name"], ingredients["sauce_name"])
+        main_page.add_bun_to_order(ingredients["bun_name"])
+        main_page.add_sauce_to_order(ingredients["sauce_name"])
         main_page.click_place_order()
 
-        assert main_page.is_order_success_modal_visible()
+        assert main_page.get_order_number_from_modal() > 0

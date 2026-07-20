@@ -1,5 +1,4 @@
 import allure
-from selenium.webdriver.support.wait import WebDriverWait
 
 from locators import login_page_locators
 from pages.base_page import BasePage
@@ -21,4 +20,4 @@ class LoginPage(BasePage):
         self.send_keys(login_page_locators.EMAIL_INPUT, email)
         self.send_keys(login_page_locators.PASSWORD_INPUT, password)
         self.click(login_page_locators.LOGIN_BUTTON)
-        WebDriverWait(self.driver, 10).until(lambda driver: "/login" not in driver.current_url)
+        self.wait_until_invisible(login_page_locators.PAGE_TITLE, timeout=10)
