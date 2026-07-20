@@ -1,4 +1,5 @@
 import allure
+from selenium.webdriver import ActionChains
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -35,25 +36,8 @@ class BasePage:
     def drag_and_drop(self, source_locator, target_locator, timeout=5):
         source = self.wait_for_visibility(source_locator, timeout)
         target = self.wait_for_visibility(target_locator, timeout)
-        self.driver.execute_script(
-            """
-            const source = arguments[0];
-            const target = arguments[1];
-            const dataTransfer = {
-                data: {},
-                setData(key, value) { this.data[key] = value; },
-                getData(key) { return this.data[key]; },
-            };
-            ["dragstart", "dragenter", "dragover", "drop", "dragend"].forEach((type, index) => {
-                const element = index === 0 || index === 4 ? source : target;
-                const event = new Event(type, { bubbles: true, cancelable: true });
-                event.dataTransfer = dataTransfer;
-                element.dispatchEvent(event);
-            });
-            """,
-            source,
-            target,
-        )
+        # move_to_element нужен: без него элемент вне viewport не попадает в корзину (счётчик не растёт).
+        ActionChains(self.driver).move_to_element(source).drag_and_drop(source, target).perform()
 
     @allure.step("Переходим в конструктор")
     def go_to_constructor(self):
