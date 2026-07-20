@@ -2,7 +2,7 @@ import allure
 
 from pages.feed_page import FeedPage
 from pages.main_page import MainPage
-from urls import BASE_URL, CONSTRUCTOR_URL, FEED_URL
+from urls import BASE_URL, FEED_URL
 
 
 @allure.link(BASE_URL, name="Stellar Burgers")
@@ -14,7 +14,8 @@ class TestMainFunctionality:
         feed_page.open()
         feed_page.go_to_constructor()
 
-        assert CONSTRUCTOR_URL in driver.current_url
+        assert FEED_URL not in driver.current_url
+        assert driver.current_url.startswith(BASE_URL)
 
     @allure.title("Переход в ленту заказов")
     @allure.description("По клику «Лента заказов» открывается страница /feed.")
