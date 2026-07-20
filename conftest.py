@@ -1,6 +1,6 @@
 import pytest
+from selenium import webdriver
 
-from driver_factory import DriverFactory
 from helpers import (
     clear_browser_session,
     create_order,
@@ -12,9 +12,21 @@ from pages.login_page import LoginPage
 from urls import BASE_URL
 
 
-@pytest.fixture(params=["chrome", "firefox"], scope="class")
+@pytest.fixture(params=["chrome", "firefox"])
 def driver(request):
-    browser = DriverFactory.getWebdriver(request.param)
+    browser_name = request.param
+    browser = None
+
+    if browser_name == "chrome":
+        browser = webdriver.Chrome()
+    elif browser_name == "firefox":
+        # snap /usr/bin/firefox — обёртка, Selenium нужен реальный binary
+        options = webdriver.FirefoxOptions()
+        options.binary_location = "/snap/firefox/current/usr/lib/firefox/firefox"
+        browser = webdriver.Firefox(options=options)
+    else:
+        raise ValueError("Can't create instance for this browser param")
+
     yield browser
     browser.quit()
 
